@@ -2,6 +2,16 @@
 
 <%@ include file="/dbconnection.jspf" %>
 <jsp:include page="/header.jsp"/>
+<%
+String username = (String) session.getAttribute("username");
+String usertype = (String) session.getAttribute("usertype");
+
+//  secure : enforcing authorization
+if (username == null || usertype == null || !usertype.equals("ADMIN")) {
+    response.sendRedirect("login.jsp");
+    return;
+}
+%>
 
 <h3>Admin page</h3>
 <%
