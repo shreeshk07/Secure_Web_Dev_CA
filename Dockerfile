@@ -1,11 +1,6 @@
-# Build via:
-# docker build --no-cache -t psiinon/bodgeit -f Dockerfile .
-# Run via:
-# docker run --rm -p 8080:8080 -i -t psiinon/bodgeit
-
 FROM tomcat:9.0
-MAINTAINER Simon Bennetts "psiinon@gmail.com"
 
-RUN curl -s -L https://github.com/psiinon/bodgeit/releases/download/1.4.0/bodgeit.war > bodgeit.war && \
-	mv bodgeit.war /usr/local/tomcat/webapps
+# copy our full cleaned project directly into Tomcat webapps
+COPY root/ /usr/local/tomcat/webapps/bodgeit/
 
+EXPOSE 8080
