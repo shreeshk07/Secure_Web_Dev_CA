@@ -1,9 +1,10 @@
 <%@ page import="java.sql.*" %>
-
+<%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
 <%@ include file="/dbconnection.jspf" %>
 
 <%
 String username = (String) request.getParameter("username");
+username = StringEscapeUtils.escapeHtml4(username);
 String password1 = (String) request.getParameter("password1");
 String password2 = (String) request.getParameter("password2");
 String usertype = (String) session.getAttribute("usertype");
