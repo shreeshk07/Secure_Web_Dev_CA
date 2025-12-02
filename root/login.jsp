@@ -9,10 +9,14 @@ String password = (String) request.getParameter("password");
 String debug = "Clear";
 
 if (request.getMethod().equals("POST") && username != null) {
-	Statement stmt = conn.createStatement();
-	ResultSet rs = null;
-	try {
-		rs = stmt.executeQuery("SELECT * FROM Users WHERE (name = '" + username + "' AND password = '" + password + "')");
+PreparedStatement stmt = null; // Secure
+ResultSet rs = null; // Secure
+try {
+	String query = "SELECT userid, name, type, currentbasketid FROM Users WHERE name = ? AND password = ?"; // Secure
+	stmt = conn.prepareStatement(query); 
+	stmt.setString(1, username); 
+	stmt.setString(2, password); 
+	rs = stmt.executeQuery(); 
 		if (rs.next()) {
 			loggedIn = true;
 			debug="Logged in";
