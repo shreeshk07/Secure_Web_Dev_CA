@@ -11,31 +11,39 @@ String password1 = (String) request.getParameter("password1");
 String password2 = (String) request.getParameter("password2");
 String okresult = null;
 String failresult = null;
+String csrfToken = "" + Math.random(); //secure
+session.setAttribute("csrfToken", csrfToken);
 
 if (password1 != null && password1.length() > 0) {
-	if ( ! password1.equals(password2)) {
-		failresult = "The passwords you have supplied are different.";
-	}  else if (password1 == null || password1.length() < 5) {
-		failresult = "You must supply a password of at least 5 characters.";
-	} else {
-		Statement stmt = conn.createStatement();
-		ResultSet rs = null;
-		try {
-			stmt.executeQuery("UPDATE Users set password= '" + password1 + "' where name = '" + username + "'");
-			
-			okresult = "Your password has been changed";
+    String sentToken = request.getParameter("csrfToken");
+    String expectedToken = (String)session.getAttribute("csrfToken");
 
-			if (request.getMethod().equals("GET")) {
-				conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'PASSWD_GET'");
-			}
+    if (sentToken == null || !sentToken.equals(expectedToken)) {
+        failresult = "Invalid CSRF token.";
+    } else {
+        if ( ! password1.equals(password2)) {
+            failresult = "The passwords you have supplied are different.";
+        }  else if (password1 == null || password1.length() < 5) {
+            failresult = "You must supply a password of at least 5 characters.";
+        } else {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = null;
+            try {
+                stmt.executeQuery("UPDATE Users set password= '" + password1 + "' where name = '" + username + "'");
+                
+                okresult = "Your password has been changed";
 
-		} catch (Exception e) {
-			failresult = "System error.";
-		} finally {
-			stmt.close();
-		}
+                if (request.getMethod().equals("GET")) {
+                    conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'PASSWD_GET'");
+                }
 
-	}
+            } catch (Exception e) {
+                failresult = "System error.";
+            } finally {
+                stmt.close();
+            }
+   }
+    }
 }
 
 %>
@@ -50,6 +58,7 @@ if (okresult != null) {
 %>
 Change your password: <br/><br/>
 <form method="POST">
+	<input type="hidden" name="csrfToken" value="<%=csrfToken%>"/>
 	<center>
 	<table>
 	<tr>
