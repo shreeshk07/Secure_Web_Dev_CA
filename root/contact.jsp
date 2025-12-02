@@ -1,5 +1,5 @@
 <%@ page import="java.sql.*" %>
-
+<%@page import="org.apache.commons.lang3.StringEscapeUtils"%>
 <%@ include file="/dbconnection.jspf" %>
 <jsp:include page="/header.jsp"/>
 
@@ -15,11 +15,8 @@ if (request.getMethod().equals("POST") && comments != null) {
 	anticsrf = request.getParameter("anticsrf");
 	if (anticsrf != null && anticsrf.equals(request.getSession().getAttribute("anticsrf"))) {
 
-		// Strip script tags, because that will make everything alright...
-		comments = comments.replace("<script>", "");
-		comments = comments.replace("</script>", "");
-		// And double quotes, just to make sure
-		comments = comments.replace("\"", "");
+	// Secure
+	comments = StringEscapeUtils.escapeHtml4(comments);
 
 		PreparedStatement stmt = conn.prepareStatement("INSERT INTO Comments (name, comment) VALUES (?, ?)");
 		ResultSet rs = null;
@@ -58,14 +55,15 @@ request.getSession().setAttribute("anticsrf", anticsrf);
 if (usertype != null && usertype.endsWith("ADMIN")) {
 	// Display all of the messages
 	ResultSet rs = null;
-	PreparedStatement  stmt = conn.prepareStatement("SELECT * FROM Comments");
+	PreparedStatement  stmt2 = conn.prepareStatement("SELECT * FROM Comments");
 	try {
-		rs = stmt.executeQuery();
+		rs = stmt2.executeQuery();
 		out.println("<br/><center><table border=\"1\" width=\"80%\" class=\"border\">");
 		out.println("<tr><th>User</th><th>Comment</th></tr>");
 		while (rs.next()) {
 			out.println("<tr>");
-			out.println("<td>" + rs.getString("name") + "</td><td>" + rs.getString("comment") + "</td>");
+			out.println("<td>" + StringEscapeUtils.escapeHtml4(rs.getString("name")) +
+           "</td><td>" + StringEscapeUtils.escapeHtml4(rs.getString("comment")) + "</td>");  //Secure
 			out.println("</tr>");
 		}
 		out.println("</table></center><br/>");
@@ -77,7 +75,7 @@ if (usertype != null && usertype.endsWith("ADMIN")) {
 			out.println("System error.");
 		}
 	} finally {
-		stmt.close();
+		stmt2.close();
 	}
 
 } else {
@@ -86,7 +84,7 @@ if (usertype != null && usertype.endsWith("ADMIN")) {
 <h3>Contact Us</h3>
 Please send us your feedback: <br/><br/>
 <form method="POST">
-	<input type="hidden" id="user" name="<%=username%>" value=""/>
+	<input type="hidden" id="user" name="user" value="<%=username%>"/>
 	<input type="hidden" id="anticsrf" name="anticsrf" value="<%=anticsrf%>"></input>
 	<center>
 	<table>
