@@ -73,14 +73,18 @@ I reviewed every page touched by user input and added server side fixes.
 All five security features in this project were implemented by me as part of this coursework.
 
 ## Repository Structure
+• /              – Main JSP pages (login, register, basket, search, admin)
+• /WEB-INF       – Deployment descriptors and config files
+• /dbconnection.jspf – Database connection logic (JDBC)
+• /Dockerfile    – Used to containerise the application
+• README.md      – Documentation for setup and security improvements
+
+The layout is kept close to the original project so the application remains easy to understand.
 
 • root folder holds the JSP pages  
 • dbconnection.jspf contains the database connection  
 • WEB-INF contains configuration files  
 • README explains the project and the changes made  
-
-The layout is kept close to the original project so the application remains easy to understand.
-
 ## Setup Instructions
 
 ### Option 1: Run with Apache Tomcat
@@ -121,7 +125,7 @@ Docker handles the build and deployment without extra setup.
 • The admin page is available only when logged in as the admin account  
 
 ## Testing Summary
-
+Automated scan: SonarQube Community Edition used for static review (SAST) to verify code risks were removed.
 Static Review
 I reviewed the code manually and used IDE warnings and pattern based checks to identify unsafe string concatenation, missing validation, and direct script output. 
 This helped confirm that the fixes removed the vulnerable behaviours.
