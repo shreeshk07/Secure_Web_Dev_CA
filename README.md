@@ -74,9 +74,13 @@ All five security features in this project were implemented by me as part of thi
 
 ## Repository Structure
 • /              – Main JSP pages (login, register, basket, search, admin)
+
 • /WEB-INF       – Deployment descriptors and config files
+
 • /dbconnection.jspf – Database connection logic (JDBC)
+
 • /Dockerfile    – Used to containerise the application
+
 • README.md      – Documentation for setup and security improvements
 
 The layout is kept close to the original project so the application remains easy to understand.
